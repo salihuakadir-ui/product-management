@@ -3,91 +3,154 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>SalsadData</title>
 
 <style>
 body {
   font-family: Arial, sans-serif;
-  background: #f0f4f8;
+  background: #f0f5f5;
   margin: 0;
-  text-align: center;
-}
-
-header {
-  background: #0645ad;
-  color: white;
-  padding: 25px;
-}
-
-header h1 {
-  margin: 0;
+  padding: 20px;
 }
 
 .container {
-  padding: 25px;
+  max-width: 450px;
+  margin: auto;
 }
 
-.wallet {
-  background: #008f5a;
+header {
+  background: #087f5b;
   color: white;
-  padding: 25px;
+  padding: 20px;
+  text-align: center;
   border-radius: 12px;
-  margin: 20px auto;
-  max-width: 400px;
 }
 
 .card {
   background: white;
   padding: 20px;
-  margin: 15px auto;
-  max-width: 400px;
-  border-radius: 10px;
+  margin-top: 15px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px #ccc;
 }
 
 button {
-  background: #0645ad;
+  background: #087f5b;
   color: white;
-  padding: 12px 25px;
   border: none;
-  border-radius: 6px;
+  padding: 13px;
+  width: 100%;
+  border-radius: 8px;
+  margin-top: 10px;
+  font-size: 16px;
+}
+
+button:active {
+  background: #055c42;
+}
+
+input, select {
+  width: 100%;
+  padding: 12px;
+  margin-top: 10px;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 7px;
 }
 </style>
 </head>
 
 <body>
 
+<div class="container">
+
 <header>
 <h1>SalsadData</h1>
 <p>Fast, Secure & Reliable</p>
 </header>
 
-<div class="container">
-
-<h2>Welcome to SalsadData</h2>
-
-<div class="wallet">
-<h2>My Wallet</h2>
-<h3>₦0.00</h3>
-<button>Add Money</button>
-</div>
-
 <div class="card">
-<h3>Buy Data</h3>
-<button>Continue</button>
+<h2>My Wallet</h2>
+<h1 id="balance">₦0.00</h1>
+<button onclick="addMoney()">Add Money</button>
 </div>
 
 <div class="card">
 <h3>Buy Airtime</h3>
-<button>Continue</button>
+<select id="airtimeNetwork">
+<option>MTN</option>
+<option>Airtel</option>
+<option>Glo</option>
+<option>9mobile</option>
+</select>
+<input type="number" id="airtimeAmount" placeholder="Enter Amount">
+<button onclick="buyAirtime()">Continue</button>
+</div>
+
+<div class="card">
+<h3>Buy Data</h3>
+<select id="dataNetwork">
+<option>MTN</option>
+<option>Airtel</option>
+<option>Glo</option>
+<option>9mobile</option>
+</select>
+<select id="dataPlan">
+<option value="500">500MB - ₦500</option>
+<option value="1000">1GB - ₦1000</option>
+<option value="2000">2GB - ₦2000</option>
+</select>
+<button onclick="buyData()">Continue</button>
 </div>
 
 <div class="card">
 <h3>Transaction History</h3>
-<button>View History</button>
+<ul id="history"></ul>
 </div>
 
 </div>
 
-</body>
-  </html>
+<script>
+let balance = 0;
+
+function updateBalance() {
+ document.getElementById("balance").innerText =
+ "₦" + balance.toFixed(2);
+}
+
+function addMoney() {
+ let amount = Number(prompt("Enter amount to add:"));
+ if(amount > 0) {
+ balance += amount;
+ updateBalance();
+ alert("Money added successfully!");
+ }
+}
+
+function buyAirtime() {
+ let amount = Number(document.getElementById("airtimeAmount").value);
+ let network = document.getElementById("airtimeNetwork").value;
+
+ if(amount <= 0) {
+ alert("Please enter a valid amount");
+ return;
+ }
+
+ if(amount > balance) {
+ alert("Insufficient wallet balance");
+ return;
+ }
+
+ balance -= amount;
+ updateBalance();
+ addHistory(network + " Airtime - ₦" + amount);
+ alert("Transaction Successful!");
+}
+
+function buyData() {
+ let amount = Number(document.getElementById("dataPlan").value);
+ let network = document.getElementById("dataNetwork").value;
+
+ if(amount > balance) {
+ alert("Insufficient wallet balance");
+ return
