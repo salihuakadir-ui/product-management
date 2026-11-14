@@ -1,204 +1,43 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SalsadData</title>
+<div class="wallet">
+  <h3>My Wallet</h3>
+  <h2 id="salsadBalance">₦0.00</h2>
 
-<style>
-body {
-  font-family: Arial, sans-serif;
-  background: #f1f8f5;
-  margin: 0;
-  padding: 20px;
-}
-header {
-  background: #087f4f;
-  color: white;
-  padding: 22px;
-  text-align: center;
-  border-radius: 12px;
-}
-h2 { color: #087f4f; }
-.card {
-  background: white;
-  padding: 18px;
-  margin-top: 18px;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px #ccc;
-}
-button {
-  background: #087f4f;
-  color: white;
-  border: none;
-  padding: 12px;
-  border-radius: 7px;
-  margin: 5px;
-  cursor: pointer;
-}
-input, select {
-  width: 100%;
-  padding: 12px;
-  margin: 8px 0;
-  box-sizing: border-box;
-  border: 1px solid #ccc;
-  border-radius: 7px;
-}
-.networks button {
-  width: 43%;
-}
-#message {
-  color: #087f4f;
-  font-weight: bold;
-}
-</style>
-</head>
+  <input type="number" id="addAmount"
+  placeholder="Enter Amount (₦100 minimum)">
 
-<body>
+  <button onclick="fundWallet()">
+    Add Money
+  </button>
 
-<header>
-<h1>SalsadData</h1>
-<p>Fast, Secure & Reliable</p>
-</header>
-
-<div class="card">
-<h2>My Wallet</h2>
-<h1 id="balance">₦0.00</h1>
+  <p id="walletMessage"></p>
 </div>
-
-<div class="card">
-<h2>Buy Airtime</h2>
-<div class="networks">
-<button onclick="selectNetwork('MTN','airtime')">MTN</button>
-<button onclick="selectNetwork('AIRTEL','airtime')">AIRTEL</button>
-<button onclick="selectNetwork('9MOBILE','airtime')">9MOBILE</button>
-<button onclick="selectNetwork('GLO','airtime')">GLO</button>
-</div>
-<input id="airPhone" type="tel" placeholder="Phone Number">
-<input id="airAmount" type="number" placeholder="Amount">
-<button onclick="buyAirtime()">Continue</button>
-</div>
-
-<div class="card">
-<h2>Buy Data</h2>
-
-<div class="networks">
-<button onclick="selectNetwork('MTN','data')">MTN</button>
-<button onclick="selectNetwork('AIRTEL','data')">AIRTEL</button>
-<button onclick="selectNetwork('9MOBILE','data')">9MOBILE</button>
-<button onclick="selectNetwork('GLO','data')">GLO</button>
-</div>
-
-<p id="selectedNetwork">Select Network</p>
-
-<select id="dataAmount">
-<option value="">Select Data Plan</option>
-<option value="100">₦100</option>
-<option value="200">₦200</option>
-<option value="300">₦300</option>
-<option value="500">₦500</option>
-<option value="1000">₦1,000</option>
-<option value="2000">₦2,000</option>
-<option value="5000">₦5,000</option>
-</select>
-
-<input id="dataPhone" type="tel" placeholder="Phone Number">
-
-<button onclick="buyData()">Continue</button>
-</div>
-
-<div class="card">
-<h2>Transaction History</h2>
-<ul id="history">
-<li>No transactions yet</li>
-</ul>
-</div>
-
-<p id="message"></p>
 
 <script>
-let balance = 0;
-let network = "";
+let balance = Number(localStorage.getItem("salsadBalance")) || 0;
 
-function selectNetwork(name, type) {
-  network = name;
-
-  if(type === "data") {
-    document.getElementById("selectedNetwork").innerText =
-    "Selected Network: " + name;
-  } else {
-    alert(name + " selected for Airtime");
-  }
+function showBalance() {
+  document.getElementById("salsadBalance").innerText =
+    "₦" + balance.toFixed(2);
 }
 
-function updateBalance() {
-  document.getElementById("balance").innerText =
-  "₦" + balance.toFixed(2);
-}
+function fundWallet() {
+  let amount = Number(document.getElementById("addAmount").value);
 
-function addHistory(text) {
-  let history = document.getElementById("history");
-
-  if(history.innerHTML.includes("No transactions yet")) {
-    history.innerHTML = "";
-  }
-
-  let item = document.createElement("li");
-  item.innerText = text;
-  history.prepend(item);
-}
-
-function buyData() {
-  let amount = Number(document.getElementById("dataAmount").value);
-  let phone = document.getElementById("dataPhone").value;
-
-  if(!network) {
-    alert("Please select a network");
+  if (amount < 100) {
+    alert("Minimum amount is ₦100");
     return;
   }
 
-  if(!amount || !phone || phone.length < 10) {
-    alert("Please enter a valid phone number and data plan");
-    return;
-  }
+  balance += amount;
+  localStorage.setItem("salsadBalance", balance);
 
-  if(balance < amount) {
-    alert("Insufficient wallet balance. Please fund your wallet.");
-    return;
-  }
+  showBalance();
 
-  balance -= amount;
-  updateBalance();
+  document.getElementById("walletMessage").innerText =
+    "Wallet updated successfully!";
 
-  addHistory("Data: " + network + " - ₦" + amount +
-  " - " + phone);
-
-  alert("Demo transaction successful!");
+  document.getElementById("addAmount").value = "";
 }
 
-function buyAirtime() {
-  let phone = document.getElementById("airPhone").value;
-  let amount = Number(document.getElementById("airAmount").value);
-
-  if(!network || !phone || phone.length < 10 || !amount) {
-    alert("Please select network and enter valid details");
-    return;
-  }
-
-  if(balance < amount) {
-    alert("Insufficient wallet balance. Please fund your wallet.");
-    return;
-  }
-
-  balance -= amount;
-  updateBalance();
-
-  addHistory("Airtime: " + network + " - ₦" +
-  amount + " - " + phone);
-
-  alert("Demo transaction successful!");
-}
+showBalance();
 </script>
-
-</body>
-</html>
