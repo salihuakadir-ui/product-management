@@ -2,8 +2,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SalsadData</title>
-<style>
+<title>SalsadData</title><style>
 *{box-sizing:border-box}
 body{
 margin:0;
@@ -14,12 +13,11 @@ color:#18352b;
 header{
 background:#087b50;
 color:white;
-padding:25px 18px;
+padding:25px;
 text-align:center;
 }
-header h1{margin:0;font-size:27px}
-header p{margin-bottom:0}
-.container{padding:18px;max-width:500px;margin:auto}
+header h1{margin:0;font-size:28px}
+.container{padding:16px;max-width:500px;margin:auto}
 .card{
 background:white;
 padding:20px;
@@ -31,49 +29,33 @@ box-shadow:0 3px 12px #00000010;
 background:linear-gradient(120deg,#087b50,#16a36b);
 color:white;
 }
-.balance h2{font-size:30px;margin:10px 0}
+.balance h2{font-size:32px;margin:12px 0}
+input,select{
+width:100%;
+padding:14px;
+margin:9px 0;
+border:1px solid #ccc;
+border-radius:8px;
+font-size:16px;
+}
 button{
 background:#087b50;
 color:white;
 border:0;
-padding:13px;
+padding:14px;
 border-radius:8px;
 width:100%;
 font-size:16px;
 margin-top:10px;
 cursor:pointer;
 }
-input,select{
-width:100%;
-padding:13px;
-margin:8px 0;
-border:1px solid #ccc;
-border-radius:8px;
-font-size:16px;
-}
-h3{margin-top:0}
-.grid{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:12px;
-}
-.service{
-background:#e5f5ed;
-padding:16px;
-border-radius:10px;
-text-align:center;
-}
+button:active{background:#055b3a}
 .history-item{
 padding:12px 0;
 border-bottom:1px solid #eee;
 }
-footer{
-text-align:center;
-padding:20px;
-color:#777;
-}
-</style>
-</head><body><header>
+footer{text-align:center;padding:20px;color:#777}
+</style></head><body><header>
 <h1>SalsadData</h1>
 <p>Fast, Secure & Reliable</p>
 </header><div class="container"><div class="card balance">
@@ -82,28 +64,25 @@ color:#777;
 <p>Available Balance</p>
 </div><div class="card">
 <h3>💰 Add Money</h3>
-<input type="number" id="deposit" placeholder="Enter amount (₦)">
+<input type="number" id="deposit" placeholder="Enter Amount ₦">
 <button onclick="addMoney()">Add Money</button>
 </div><div class="card">
-<h3>📱 Buy Airtime</h3>
-<select id="airtimeNetwork">
+<h3>📱 Buy Airtime</h3><select id="airtimeNetwork">
 <option value="">Select Network</option>
 <option>MTN</option>
 <option>AIRTEL</option>
 <option>GLO</option>
 <option>9MOBILE</option>
-</select>
-<input type="number" id="airtimeAmount" placeholder="Amount (₦)">
-<button onclick="buyAirtime()">Continue</button>
+</select><input type="tel" id="airtimePhone" placeholder="Enter Phone Number" maxlength="11"><input type="number" id="airtimeAmount" placeholder="Enter Amount ₦"><button onclick="buyAirtime()">Continue</button>
+
 </div><div class="card">
-<h3>🌐 Buy Data</h3>
-<select id="dataNetwork">
+<h3>🌐 Buy Data</h3><select id="dataNetwork">
 <option value="">Select Network</option>
 <option>MTN</option>
 <option>AIRTEL</option>
 <option>GLO</option>
 <option>9MOBILE</option>
-</select><select id="dataAmount">
+</select><input type="tel" id="dataPhone" placeholder="Enter Phone Number" maxlength="11"><select id="dataAmount">
 <option value="">Select Data Plan</option>
 <option value="100">₦100</option>
 <option value="200">₦200</option>
@@ -119,12 +98,15 @@ color:#777;
 <p>Welcome to SalsadData</p>
 <p>Fast, Secure & Reliable</p>
 </footer><script>
-let balance = Number(localStorage.getItem("salsad_balance")) || 0;
-let history = JSON.parse(localStorage.getItem("salsad_history") || "[]");
+
+let balance=Number(localStorage.getItem("salsad_balance"))||0;
+
+let history=JSON.parse(localStorage.getItem("salsad_history")||"[]");
 
 function updateDisplay(){
-document.getElementById("balance").innerText =
-"₦" + balance.toLocaleString("en-NG",{minimumFractionDigits:2});
+
+document.getElementById("balance").innerText=
+"₦"+balance.toLocaleString("en-NG",{minimumFractionDigits:2});
 
 let box=document.getElementById("history");
 
@@ -134,87 +116,126 @@ box.innerHTML="No transactions yet.";
 box.innerHTML=history.map(item=>
 `<div class="history-item">
 ${item.name}<br>
-<small>${item.date}</small>
+<small>${item.phone} | ${item.date}</small>
 <strong style="float:right">${item.amount}</strong>
 </div>`
 ).join("");
 }
+
 localStorage.setItem("salsad_balance",balance);
 localStorage.setItem("salsad_history",JSON.stringify(history));
+
 }
 
-function record(name,amount){
+function record(name,phone,amount){
+
 history.unshift({
 name:name,
+phone:phone,
 amount:amount,
 date:new Date().toLocaleString()
 });
+
+}
+
+function validPhone(phone){
+return /^0[789][01]\d{8}$/.test(phone);
 }
 
 function addMoney(){
+
 let amount=Number(document.getElementById("deposit").value);
 
-if(!amount || amount<=0){
-alert("Please enter a valid amount");
+if(!amount||amount<=0){
+alert("Enter a valid amount");
 return;
 }
 
 balance+=amount;
-record("Demo wallet deposit","+"+"₦"+amount.toLocaleString());
+
+record("Demo Wallet Deposit","-", "+₦"+amount.toLocaleString());
+
 updateDisplay();
 
 document.getElementById("deposit").value="";
+
 alert("Demo deposit successful!");
+
 }
 
 function buyAirtime(){
+
 let network=document.getElementById("airtimeNetwork").value;
+let phone=document.getElementById("airtimePhone").value.trim();
 let amount=Number(document.getElementById("airtimeAmount").value);
 
-if(!network || !amount || amount<=0){
-alert("Please select network and amount");
+if(!network||!phone||!amount){
+alert("Please complete all fields");
+return;
+}
+
+if(!validPhone(phone)){
+alert("Enter a valid 11-digit Nigerian phone number");
 return;
 }
 
 if(balance<amount){
-alert("Insufficient balance. Please add money to your wallet.");
+alert("Insufficient Balance. Please add money.");
 return;
 }
 
-if(!confirm("Buy ₦"+amount+" "+network+" airtime?"))return;
+if(!confirm("Confirm ₦"+amount+" "+network+" airtime for "+phone+"?"))return;
 
 balance-=amount;
-record(network+" Airtime","-₦"+amount.toLocaleString());
+
+record(network+" Airtime",phone,"-₦"+amount.toLocaleString());
+
 updateDisplay();
 
+document.getElementById("airtimePhone").value="";
 document.getElementById("airtimeAmount").value="";
+
 alert("Demo transaction successful!");
+
 }
 
 function buyData(){
+
 let network=document.getElementById("dataNetwork").value;
+let phone=document.getElementById("dataPhone").value.trim();
 let amount=Number(document.getElementById("dataAmount").value);
 
-if(!network || !amount){
-alert("Please select network and data plan");
+if(!network||!phone||!amount){
+alert("Please complete all fields");
+return;
+}
+
+if(!validPhone(phone)){
+alert("Enter a valid 11-digit Nigerian phone number");
 return;
 }
 
 if(balance<amount){
-alert("Insufficient balance. Please add money to your wallet.");
+alert("Insufficient Balance. Please add money.");
 return;
 }
 
-if(!confirm("Buy ₦"+amount+" "+network+" data?"))return;
+if(!confirm("Confirm ₦"+amount+" "+network+" data for "+phone+"?"))return;
 
 balance-=amount;
-record(network+" Data","-₦"+amount.toLocaleString());
+
+record(network+" Data",phone,"-₦"+amount.toLocaleString());
+
 updateDisplay();
 
+document.getElementById("dataPhone").value="";
 document.getElementById("dataAmount").value="";
+
 alert("Demo transaction successful!");
+
 }
 
 updateDisplay();
+
 </script></body>
-</html>
+                                                                                               </html>
