@@ -1,5 +1,5 @@
 <!DOCTYPE html><html lang="en">
-<SalsadData>
+<head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SalsadData</title><style>
@@ -11,19 +11,33 @@ background:#f0f5f3;
 color:#18352b;
 }
 header{
-background:#087b50;
+background:linear-gradient(120deg,#075e45,#087bba);
 color:white;
 padding:25px;
 text-align:center;
 }
-header h1{margin:0;font-size:28px}
-.container{padding:16px;max-width:500px;margin:auto}
+nav{
+background:#064b39;
+display:flex;
+flex-wrap:wrap;
+justify-content:center;
+gap:5px;
+padding:10px;
+}
+nav a{
+color:white;
+text-decoration:none;
+padding:10px 8px;
+font-size:13px;
+}
+.container{padding:16px;max-width:550px;margin:auto}
 .card{
 background:white;
 padding:20px;
 border-radius:14px;
 margin-bottom:16px;
 box-shadow:0 3px 12px #00000010;
+scroll-margin-top:15px;
 }
 .balance{
 background:linear-gradient(120deg,#087b50,#16a36b);
@@ -49,7 +63,6 @@ font-size:16px;
 margin-top:10px;
 cursor:pointer;
 }
-button:active{background:#055b3a}
 .history-item{
 padding:12px 0;
 border-bottom:1px solid #eee;
@@ -58,49 +71,77 @@ footer{text-align:center;padding:20px;color:#777}
 </style></head><body><header>
 <h1>SalsadData</h1>
 <p>Fast, Secure & Reliable</p>
-</header><div class="container"><div class="card balance">
-<h3>My Wallet</h3>
+</header><nav>
+<a href="#home">Home</a>
+<a href="#profile">Profile</a>
+<a href="#wallet">Wallet</a>
+<a href="#airtime">Airtime</a>
+<a href="#data">Data</a>
+<a href="#history">History</a>
+<a href="#settings">Settings</a>
+</nav><div class="container"><section id="home" class="card">
+<h3>Welcome to SalsadData</h3>
+<p>Your trusted platform for fast, secure and reliable digital services.</p>
+</section><section id="profile" class="card">
+<h3>👤 My Profile</h3>
+<input type="text" id="fullName" placeholder="Enter Full Name">
+<input type="tel" id="profilePhone" placeholder="Enter Phone Number">
+<input type="email" id="profileEmail" placeholder="Enter Email Address">
+<button onclick="saveProfile()">Save Profile</button>
+</section><section id="wallet" class="card balance">
+<h3>💰 My Wallet</h3>
 <h2 id="balance">₦0.00</h2>
 <p>Available Balance</p>
-</div><div class="card">
-<h3>💰 Add Money</h3>
+</section><section class="card">
+<h3>➕ Add Money</h3>
 <input type="number" id="deposit" placeholder="Enter Amount ₦">
 <button onclick="addMoney()">Add Money</button>
-</div><div class="card">
-<h3>📱 Buy Airtime</h3><select id="airtimeNetwork">
+</section><section id="airtime" class="card">
+<h3>📱 Buy Airtime</h3>
+<select id="airtimeNetwork">
 <option value="">Select Network</option>
 <option>MTN</option>
 <option>AIRTEL</option>
 <option>GLO</option>
 <option>9MOBILE</option>
-</select><input type="tel" id="airtimePhone" placeholder="Enter Phone Number" maxlength="11"><input type="number" id="airtimeAmount" placeholder="Enter Amount ₦"><button onclick="buyAirtime()">Continue</button>
-
-</div><div class="card">
-<h3>🌐 Buy Data</h3><select id="dataNetwork">
+</select>
+<input type="tel" id="airtimePhone" placeholder="Enter Phone Number" maxlength="11">
+<input type="number" id="airtimeAmount" placeholder="Enter Amount ₦">
+<button onclick="buyAirtime()">Continue</button>
+</section><section id="data" class="card">
+<h3>🌐 Buy Data</h3>
+<select id="dataNetwork">
 <option value="">Select Network</option>
 <option>MTN</option>
 <option>AIRTEL</option>
 <option>GLO</option>
 <option>9MOBILE</option>
-</select><input type="tel" id="dataPhone" placeholder="Enter Phone Number" maxlength="11"><select id="dataAmount">
+</select>
+<input type="tel" id="dataPhone" placeholder="Enter Phone Number" maxlength="11">
+<select id="dataAmount">
 <option value="">Select Data Plan</option>
 <option value="100">₦100</option>
 <option value="200">₦200</option>
 <option value="500">₦500</option>
 <option value="1000">₦1,000</option>
 <option value="2000">₦2,000</option>
-</select><button onclick="buyData()">Continue</button>
-
-</div><div class="card">
+</select>
+<button onclick="buyData()">Continue</button>
+</section><section id="history" class="card">
 <h3>📜 Transaction History</h3>
-<div id="history">No transactions yet.</div>
-</div></div><footer>
+<div id="historyList">No transactions yet.</div>
+</section><section id="settings" class="card">
+<h3>⚙️ Settings</h3>
+<p>Manage your SalsadData profile and account.</p>
+<button onclick="alert('Settings page is coming soon!')">Account Settings</button>
+<button onclick="logout()">Logout</button>
+</section></div><footer>
 <p>Welcome to SalsadData</p>
 <p>Fast, Secure & Reliable</p>
+<p>© 2026 SalsadData</p>
 </footer><script>
 
 let balance=Number(localStorage.getItem("salsad_balance"))||0;
-
 let history=JSON.parse(localStorage.getItem("salsad_history")||"[]");
 
 function updateDisplay(){
@@ -108,7 +149,7 @@ function updateDisplay(){
 document.getElementById("balance").innerText=
 "₦"+balance.toLocaleString("en-NG",{minimumFractionDigits:2});
 
-let box=document.getElementById("history");
+let box=document.getElementById("historyList");
 
 if(history.length===0){
 box.innerHTML="No transactions yet.";
@@ -124,22 +165,51 @@ ${item.name}<br>
 
 localStorage.setItem("salsad_balance",balance);
 localStorage.setItem("salsad_history",JSON.stringify(history));
-
 }
 
 function record(name,phone,amount){
-
 history.unshift({
 name:name,
 phone:phone,
 amount:amount,
 date:new Date().toLocaleString()
 });
-
 }
 
 function validPhone(phone){
 return /^0[789][01]\d{8}$/.test(phone);
+}
+
+function saveProfile(){
+
+let name=document.getElementById("fullName").value.trim();
+let phone=document.getElementById("profilePhone").value.trim();
+let email=document.getElementById("profileEmail").value.trim();
+
+if(!name||!phone||!email){
+alert("Please complete all profile fields");
+return;
+}
+
+if(!validPhone(phone)){
+alert("Enter a valid Nigerian phone number");
+return;
+}
+
+localStorage.setItem("salsad_profile",JSON.stringify({
+name:name,phone:phone,email:email
+}));
+
+alert("Profile saved successfully!");
+}
+
+function loadProfile(){
+let profile=JSON.parse(localStorage.getItem("salsad_profile")||"null");
+if(profile){
+document.getElementById("fullName").value=profile.name;
+document.getElementById("profilePhone").value=profile.phone;
+document.getElementById("profileEmail").value=profile.email;
+}
 }
 
 function addMoney(){
@@ -152,15 +222,10 @@ return;
 }
 
 balance+=amount;
-
 record("Demo Wallet Deposit","-", "+₦"+amount.toLocaleString());
-
 updateDisplay();
-
 document.getElementById("deposit").value="";
-
 alert("Demo deposit successful!");
-
 }
 
 function buyAirtime(){
@@ -187,16 +252,13 @@ return;
 if(!confirm("Confirm ₦"+amount+" "+network+" airtime for "+phone+"?"))return;
 
 balance-=amount;
-
 record(network+" Airtime",phone,"-₦"+amount.toLocaleString());
-
 updateDisplay();
 
 document.getElementById("airtimePhone").value="";
 document.getElementById("airtimeAmount").value="";
 
 alert("Demo transaction successful!");
-
 }
 
 function buyData(){
@@ -223,19 +285,23 @@ return;
 if(!confirm("Confirm ₦"+amount+" "+network+" data for "+phone+"?"))return;
 
 balance-=amount;
-
 record(network+" Data",phone,"-₦"+amount.toLocaleString());
-
 updateDisplay();
 
 document.getElementById("dataPhone").value="";
 document.getElementById("dataAmount").value="";
 
 alert("Demo transaction successful!");
+}
 
+function logout(){
+if(confirm("Are you sure you want to logout?")){
+alert("Logout feature will be connected to authentication soon.");
+}
 }
 
 updateDisplay();
+loadProfile();
 
 </script></body>
 </html>
